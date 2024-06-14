@@ -13,8 +13,11 @@ io.on("connection", (socket) => {
     const { email, roomno } = data;
     emailToSocketIdMap.set(email, socket.id);
     socketidToEmailMap.set(socket.id, email);
-    // allowing user to join, sent data again to client
+    // new event emitted so that new room channel can be accessed with it
+    io.to(roomno).emit("user:joined", { email, id: socket.id });
+    socket.join(roomno);
 
+    // allowing user to join, sent data again to client
     io.to(socket.id).emit("room:join", data);
   });
 });
